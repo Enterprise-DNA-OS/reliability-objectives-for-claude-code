@@ -1,13 +1,45 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Reliability Objectives for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Service reliability review",
+    "subtitle": "Recorded evidence, not live monitoring",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Decisions needed",
+        "sql": "select code,owner,objectives,blocked_objectives,overdue_actions,readiness from service_readiness order by code"
+      },
+      {
+        "title": "Error budgets",
+        "sql": "select code,basis,remaining_pct,state from budget_status order by code"
+      }
+    ]
+  },
+  {
+    "name": "coverage",
+    "title": "Measurement coverage",
+    "sections": [
+      {
+        "title": "Complete UTC days",
+        "sql": "select code,window_days,covered_days,latest_day,total_events,bad_events,reliability_pct,complete from daily_budgets order by code",
+        "note": "An incomplete window cannot establish release readiness."
+      },
+      {
+        "title": "Imported budget snapshots",
+        "sql": "select code,observed_at,window_end,remaining_pct,composite,fresh from imported_budgets order by code"
+      }
+    ]
+  },
+  {
+    "name": "follow-up",
+    "title": "Reliability follow-up",
+    "sections": [
+      {
+        "title": "Attention",
+        "sql": "select * from attention order by service,record"
+      },
+      {
+        "title": "Record checks",
+        "sql": "select * from compliance_checks order by service,rule"
       }
     ]
   }

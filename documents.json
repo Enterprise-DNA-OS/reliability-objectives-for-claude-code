@@ -1,11 +1,50 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "reliability-review",
+    "title": "Service reliability review",
+    "for_each": "select id,name from services order by code",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Accountable owner and policy",
+        "layout": "record",
+        "sql": "select name,owner,policy,review_due from services where id=$1"
+      },
+      {
+        "title": "Objective evidence",
+        "sql": "select code,basis,remaining_pct,state from budget_status where service_id=$1 order by code"
+      },
+      {
+        "title": "Follow-up actions",
+        "sql": "select title,owner,due,status,resolution from actions where service_id=$1 order by due"
+      },
+      {
+        "title": "Recorded decisions",
+        "sql": "select decision,note,actor,created_at from decisions where service_id=$1 order by created_at"
+      }
+    ]
+  },
+  {
+    "name": "error-budget-policy",
+    "title": "Error-budget policy for review",
+    "for_each": "select id,name from services order by code",
+    "file": "name",
+    "sections": [
+      {
+        "title": "Scope and rule",
+        "layout": "record",
+        "sql": "select name,owner,policy,review_due from services where id=$1",
+        "note": "Draft for owner approval. This document does not execute or approve a deployment."
+      },
+      {
+        "title": "Objectives",
+        "sql": "select code,name,mode,target,window_days from objectives where service_id=$1 order by code"
+      },
+      {
+        "title": "Record handling",
+        "layout": "record",
+        "sql": "select retention_purpose,retention_review from services where id=$1"
+      }
     ]
   }
 ]
